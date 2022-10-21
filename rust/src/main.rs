@@ -62,8 +62,7 @@ mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
 
-    #[test]
-    fn test_create_tree() {
+    pub fn mock_input_hashes() -> Vec<String> {
         let addr = Address::from(
             "0xdcD49C36E69bF85FA9c5a25dEA9455602C0B289e"
                 .parse::<Address>()
@@ -75,7 +74,7 @@ mod tests {
         let amount = encode(&vec![Token::Address(addr), Token::Uint(U256::from(100))]);
         println!("amount: {:?}", keccak256(amount).encode_hex());
 
-        let hashes = vec![
+        vec![
             hash(vec![Token::Address(addr), Token::Uint(U256::from(500))]),
             hash(vec![
                 Token::Address(Address::zero()),
@@ -89,7 +88,12 @@ mod tests {
                 Token::Address(Address::zero()),
                 Token::Uint(U256::from(800)),
             ]),
-        ];
+        ]
+    }
+
+    #[test]
+    fn test_create_tree() {
+        let hashes = mock_input_hashes();
 
         let merkle_inputs = MerkleTree::new(hashes).unwrap();
         println!("\n{:#?}", merkle_inputs);
