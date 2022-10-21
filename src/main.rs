@@ -5,9 +5,9 @@ use ethers::{
 };
 use merkle_generator::merkle::MerkleTree;
 
-pub fn hash(inputs: Vec<Token>) -> String {
-    let x = keccak256(&encode(&inputs)).encode_hex();
-    x
+pub fn hash(inputs: Vec<Token>) -> H256 {
+    let x = keccak256(&encode(&inputs));
+    H256::from(x)
 }
 
 fn main() {
@@ -62,17 +62,17 @@ mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
 
-    pub fn mock_input_hashes() -> Vec<String> {
+    pub fn mock_input_hashes() -> Vec<H256> {
         let addr = Address::from(
             "0xdcD49C36E69bF85FA9c5a25dEA9455602C0B289e"
                 .parse::<Address>()
                 .unwrap(),
         );
         let y = keccak256(addr.as_bytes());
-        println!("addr {:?}", y.encode_hex());
+        println!("addr {:?}", H256::from(y));
 
         let amount = encode(&vec![Token::Address(addr), Token::Uint(U256::from(100))]);
-        println!("amount: {:?}", keccak256(amount).encode_hex());
+        println!("amount: {:?}", H256::from(keccak256(amount)));
 
         vec![
             hash(vec![Token::Address(addr), Token::Uint(U256::from(500))]),
