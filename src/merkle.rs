@@ -1,4 +1,7 @@
-use ethers::abi::{AbiEncode, Token};
+use ethers::{
+    abi::{encode, AbiEncode, Token},
+    utils::keccak256,
+};
 
 pub struct MerkleTree {
     pub root: String,
@@ -28,12 +31,13 @@ pub fn hash(inputs: &mut Vec<String>) -> Vec<String> {
     let mut i: usize = 0;
     let mut hashes: Vec<String> = vec![];
     while hashes.len() != inputs.len() / 2 {
-        let data = ethers::utils::keccak256(ethers::abi::encode(&vec![
+        let data = keccak256(encode(&vec![
             Token::String(inputs[i].clone()),
             Token::String(inputs[i + 1].clone()),
         ]));
+
         let hex = data.encode_hex();
-        let hex = hex.replace("0x", "");
+        // let hex = hex.replace("0x", "");
         hashes.push(hex);
         i += 2;
     }

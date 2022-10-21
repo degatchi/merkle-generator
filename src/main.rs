@@ -4,17 +4,20 @@ use ethers::{
     utils::keccak256,
 };
 use merkle_generator::merkle::MerkleTree;
-use rs_merkle::{algorithms::Sha256, Hasher};
 
 pub fn hash(inputs: Vec<Token>) -> String {
-    let x = Sha256::hash(&encode(&inputs)).encode_hex().replace("0x", "");
+    let x = keccak256(&encode(&inputs)).encode_hex();
     x
 }
 
 fn main() {
     let hashes = vec![
         hash(vec![
-            Token::Address(Address::zero()),
+            Token::Address(Address::from(
+                "0xdcD49C36E69bF85FA9c5a25dEA9455602C0B289e"
+                    .parse::<Address>()
+                    .unwrap(),
+            )),
             Token::Uint(U256::from(500)),
         ]),
         hash(vec![Token::Uint(U256::from(600))]),
@@ -24,20 +27,6 @@ fn main() {
 
     let merkle_inputs = MerkleTree::new(hashes).unwrap();
     println!("{:#?}", merkle_inputs);
-
-    // let proof = vec![
-    //     "e3802336d5db6fe8a80873016a8e4ec07da32f8aff1b18fb2900fc6f2b0f68a2",
-    //     "045d4ed6e0fa7cfee80f9f83670300cbb104cac68bb8b1bd3dc89c871e5fcdbe",
-    // ];
-
-    // let root = &merkle_inputs[merkle_inputs.len() - 1][0];
-    // println!("root {:#?}", root);
-
-    // proof_decode(
-    //     &root,
-    //     proof,
-    //     "104aefa9604fadb80a0277aa3935be473de1ff63f58f08c2f1a0dbe51e8fabf1",
-    // );
 }
 
 pub fn proof_decode(root: &str, proof: Vec<&str>, leaf: &str) -> bool {
@@ -58,5 +47,51 @@ pub fn proof_decode(root: &str, proof: Vec<&str>, leaf: &str) -> bool {
     } else {
         println!("[FAIL] root: {:?}", last_hash);
         return false;
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
+//
+//  Tests
+//  run: cargo test -- --nocapture
+//
+// ---------------------------------------------------------------------------------------------
+#[cfg(test)]
+mod tests {
+
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+
+    #[test]
+    fn test_create_tree() {
+        let addr = Address::from(
+            "0xdcD49C36E69bF85FA9c5a25dEA9455602C0B289e"
+                .parse::<Address>()
+                .unwrap(),
+        );
+        let y = keccak256(addr.as_bytes());
+        println!("addr {:?}", y.encode_hex());
+
+        let amount = encode(&vec![Token::Address(addr), Token::Uint(U256::from(100))]);
+        println!("amount: {:?}", keccak256(amount).encode_hex());
+
+        let hashes = vec![
+            hash(vec![Token::Address(addr), Token::Uint(U256::from(500))]),
+            hash(vec![
+                Token::Address(Address::zero()),
+                Token::Uint(U256::from(600)),
+            ]),
+            hash(vec![
+                Token::Address(Address::zero()),
+                Token::Uint(U256::from(700)),
+            ]),
+            hash(vec![
+                Token::Address(Address::zero()),
+                Token::Uint(U256::from(800)),
+            ]),
+        ];
+
+        let merkle_inputs = MerkleTree::new(hashes).unwrap();
+        println!("\n{:#?}", merkle_inputs);
     }
 }
