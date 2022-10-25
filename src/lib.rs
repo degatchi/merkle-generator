@@ -1,1 +1,1 @@
-pub mod merkle;
+pub mod generation;

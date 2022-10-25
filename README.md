@@ -1,11 +1,16 @@
-# merkle-generator
-Bootstrap your merkle tree.
+# Merkle Generator
 
-***WORK IN PROGRESS***
+Bootstrap your merkle tree, in Rust.
+
+**_WORK IN PROGRESS_**
 
 Please feel free to make PRs <3
 
-## Todo
-- [ ] Multi data type compatibility like solidity's `abi.encodePacked(...)`.
-- [ ] Merkle Tree creation based off `.txt` or `.json` files.
-- [ ] Proof generator
+## Features
+
+- [x] Multi data type compatibility.
+- [x] Odd leaf amount compatibility.
+- [x] Proof generation.
+  - [ ] `.json` output.
+- [x] Merkle Tree creation
+  - [ ] From `.json` input.
