@@ -6,23 +6,45 @@ use ethers::{
     utils::keccak256,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+pub struct Data {
+    inputs: Vec<Token>,
+    proof: Vec<H256>,
+    root: H256,
+    leaf: H256,
+}
+
+impl Data {
+    pub fn new(inputs: Vec<Token>, proof: Vec<H256>, root: H256, leaf: H256) -> Self {
+        Self {
+            inputs,
+            proof,
+            root,
+            leaf,
+        }
+    }
+}
+
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct MerkleTree {
     pub root: H256,
-    pub initial_tokens: Vec<Vec<Token>>,
     pub rows: Vec<Vec<H256>>,
     pub product_hashes: BTreeMap<H256, (H256, H256)>,
+    pub token_hash: BTreeMap<H256, Vec<Token>>,
     pub proofs: BTreeMap<H256, Vec<H256>>,
 }
 
 impl MerkleTree {
     pub fn new(inputs: &Vec<Vec<Token>>) -> Self {
-        let initial_hashes = hash_all_tokens(inputs);
+        let leaf_hashes: BTreeMap<H256, Vec<Token>> = hash_all_tokens(inputs);
 
         // New hash created by (Hash 1, Hash 2)
         let mut product_hashes: BTreeMap<H256, (H256, H256)> = BTreeMap::new();
 
+        let initial_hashes: Vec<H256> = leaf_hashes.clone().into_keys().collect();
+
         let mut hashes: Vec<Vec<H256>> = vec![initial_hashes];
+
         while hashes[hashes.len() - 1].len() != 1 {
             let output = hash(&hashes[hashes.len() - 1].clone(), &mut product_hashes);
             hashes.push(output);
@@ -32,13 +54,14 @@ impl MerkleTree {
 
         let mut tree = Self {
             root: hashes[hashes.len() - 1][0].clone(),
-            initial_tokens: inputs.to_vec(),
             rows: hashes,
             product_hashes,
+            token_hash: leaf_hashes,
             proofs: BTreeMap::new(),
         };
 
         tree.calculate_proofs();
+        tree.record_proofs();
 
         tree
     }
@@ -73,6 +96,27 @@ impl MerkleTree {
                 }
             }
         }
+    }
+
+    pub fn record_proofs(&self) {
+        std::fs::create_dir("src/outputs").unwrap();
+        let path: String = format!("src/outputs/proofs.json");
+        std::fs::File::create(path.clone()).unwrap();
+
+        let mut data: Vec<Data> = vec![];
+        for (leaf, inputs) in self.token_hash.iter() {
+            data.push(Data::new(
+                inputs.to_vec(),
+                self.proofs.get(leaf).unwrap().to_vec(),
+                self.root.clone(),
+                leaf.clone(),
+            ));
+        }
+
+        // Save the JSON structure into the output file
+        std::fs::write(path, serde_json::to_string_pretty(&data).unwrap()).unwrap();
+
+        println!("data")
     }
 }
 
@@ -119,12 +163,15 @@ pub fn hash_tokens(input: &Vec<Token>) -> H256 {
     H256::from(keccak256(&encode(&input)))
 }
 
-pub fn hash_all_tokens(inputs: &Vec<Vec<Token>>) -> Vec<H256> {
-    let mut hashes = vec![];
+pub fn hash_all_tokens(inputs: &Vec<Vec<Token>>) -> BTreeMap<H256, Vec<Token>> {
+    let mut mapping: BTreeMap<H256, Vec<Token>> = BTreeMap::new();
+
     for tokens in inputs {
-        hashes.push(hash_tokens(tokens));
+        let hash = hash_tokens(tokens);
+        mapping.insert(hash, tokens.to_vec());
     }
-    hashes
+
+    mapping
 }
 
 // impl std::fmt::Debug for MerkleTree {
