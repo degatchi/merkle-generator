@@ -11,6 +11,6 @@ Please feel free to make PRs <3
 - [x] Multi data type compatibility.
 - [x] Odd leaf amount compatibility.
 - [x] Proof generation.
-  - [ ] `.json` output.
+  - [x] `.json` output.
 - [x] Merkle Tree creation
   - [ ] From `.json` input.
