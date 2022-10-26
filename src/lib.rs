@@ -83,11 +83,11 @@ impl std::fmt::Debug for Data {
 
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct MerkleTree {
-    pub root: H256,
+    pub token_hash: BTreeMap<H256, Vec<Token>>,
     pub rows: Vec<Vec<H256>>,
     pub product_hashes: BTreeMap<H256, (H256, H256)>,
-    pub token_hash: BTreeMap<H256, Vec<Token>>,
     pub proofs: BTreeMap<H256, Vec<H256>>,
+    pub root: H256,
 }
 
 impl MerkleTree {
@@ -124,7 +124,7 @@ impl MerkleTree {
             }
             token_list.push(tokens);
         }
-        
+
         MerkleTree::new(&token_list)
     }
 
@@ -146,10 +146,10 @@ impl MerkleTree {
         // println!("Hash products {:#?}", product_hashes);
 
         let mut tree = Self {
+            token_hash: leaf_hashes,
             root: hashes[hashes.len() - 1][0].clone(),
             rows: hashes,
             product_hashes,
-            token_hash: leaf_hashes,
             proofs: BTreeMap::new(),
         };
 
