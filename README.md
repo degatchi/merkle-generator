@@ -58,7 +58,8 @@ Please feel free to make PRs <3
 ### Output
 
 ```
-root: 0x97c7f98805481c199f21f29a2390071af3f73b91e19797d5a5d6f6c8bed296c6,
+{
+    root: 0x97c7f98805481c199f21f29a2390071af3f73b91e19797d5a5d6f6c8bed296c6,
     rows: [
         [
             0x69d3ca75db69c48c0569d359a5f110f5101ae898fe7a89e9537aa4a487110801,
