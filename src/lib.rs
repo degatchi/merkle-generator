@@ -124,8 +124,7 @@ impl MerkleTree {
             }
             token_list.push(tokens);
         }
-        println!("token list: {:#?}", token_list);
-
+        
         MerkleTree::new(&token_list)
     }
 
@@ -144,7 +143,7 @@ impl MerkleTree {
             hashes.push(output);
         }
 
-        println!("Hash products {:#?}", product_hashes);
+        // println!("Hash products {:#?}", product_hashes);
 
         let mut tree = Self {
             root: hashes[hashes.len() - 1][0].clone(),
@@ -204,21 +203,10 @@ impl MerkleTree {
                 self.root.clone(),
                 leaf.clone(),
             ));
-            println!(
-                "{:#?}",
-                Data::new(
-                    inputs.to_vec(),
-                    self.proofs.get(leaf).unwrap().to_vec(),
-                    self.root.clone(),
-                    leaf.clone(),
-                )
-            );
         }
 
         // Save the JSON structure into the output file
         std::fs::write(path, serde_json::to_string_pretty(&data).unwrap()).unwrap();
-
-        println!("data")
     }
 }
 
@@ -329,6 +317,7 @@ mod tests {
     #[test]
     // #[ignore]
     fn test_import() {
-        MerkleTree::import();
+        let tree = MerkleTree::import();
+        println!("Merkle Tree: {:#?}", tree)
     }
 }
