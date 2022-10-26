@@ -84,8 +84,8 @@ impl std::fmt::Debug for Data {
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct MerkleTree {
     pub token_hash: BTreeMap<H256, Vec<Token>>,
-    pub rows: Vec<Vec<H256>>,
     pub product_hashes: BTreeMap<H256, (H256, H256)>,
+    pub rows: Vec<Vec<H256>>,
     pub proofs: BTreeMap<H256, Vec<H256>>,
     pub root: H256,
 }
