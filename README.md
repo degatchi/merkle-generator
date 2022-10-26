@@ -13,6 +13,13 @@ Please feel free to make PRs <3
 - [x] Merkle Tree creation
   - [x] From `.json` input.
 
+## Quick Start
+
+1. Type in your desired whitelist parameters into `input.json` with the format of, `"types"` followed by `"inputs"`. Example shown in `Showcase`'s `JSON Input`.
+2. Run `cargo start` to create the `output.json` with the `input.json`.
+3. When using whitelists in your contract, use openzeppelin's `MerkleProof.sol`'s `verify` function. Use the `inputs` to create the `node` (e.g, `bytes32 node = keccak256(abi.encode(inputA, inputB, inputC));`). Then fill out the `verify` parameters with `root`, `node` and `proof`.
+4. Integrate the `output.json` into your frontend with connected public key detection to auto-fill the parameters in whatever format you desire.
+
 ## Showcase
 
 ### JSON Input
