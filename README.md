@@ -2,8 +2,6 @@
 
 Bootstrap your merkle tree, in Rust.
 
-**_WORK IN PROGRESS_**
-
 Please feel free to make PRs <3
 
 ## Features
