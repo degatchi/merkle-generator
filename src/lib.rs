@@ -5,8 +5,10 @@ use ethers::{
     prelude::*,
     utils::keccak256,
 };
+use serde::ser::SerializeMap;
+use serde_json::Value;
 
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, serde::Deserialize)]
 pub struct Data {
     inputs: Vec<Token>,
     proof: Vec<H256>,
@@ -25,6 +27,60 @@ impl Data {
     }
 }
 
+impl serde::Serialize for Data {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        // We don't know the length of the map at this point, so it's None
+        let mut map = serializer.serialize_map(None)?;
+
+        let formatted_inputs: Vec<String> = self
+            .inputs
+            .iter()
+            .map(|token| {
+                if let Some(x) = token.clone().into_uint() {
+                    x.to_string()
+                } else if let Some(x) = token.clone().into_address() {
+                    format!("{:?}", x)
+                } else {
+                    token.to_string()
+                }
+            })
+            .collect();
+
+        map.serialize_entry("inputs", &formatted_inputs)?;
+        map.serialize_entry("proof", &self.proof)?;
+        map.serialize_entry("root", &self.root)?;
+        map.serialize_entry("leaf", &self.leaf)?;
+
+        map.end()
+    }
+}
+
+impl std::fmt::Debug for Data {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let formatted_inputs: Vec<String> = self
+            .inputs
+            .iter()
+            .map(|token| {
+                if let Some(x) = token.clone().into_uint() {
+                    x.to_string()
+                } else {
+                    token.to_string()
+                }
+            })
+            .collect();
+
+        f.debug_struct("Output")
+            .field("inputs", &formatted_inputs)
+            .field("proof", &self.proof)
+            .field("root", &self.root)
+            .field("leaf", &self.leaf)
+            .finish()
+    }
+}
+
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct MerkleTree {
     pub root: H256,
@@ -35,6 +91,44 @@ pub struct MerkleTree {
 }
 
 impl MerkleTree {
+    pub fn import() -> Self {
+        // Get the filenames from the command line.
+        let input_path = format!("src/input.json");
+
+        let data = {
+            // Load the first file into a string.
+            let text = std::fs::read_to_string(&input_path).unwrap();
+
+            // Parse the string into a dynamically-typed JSON structure.
+            serde_json::from_str::<Value>(&text).unwrap()
+        };
+
+        let elements = data.as_array().unwrap();
+        let types = elements[0].get("types").unwrap().as_array().unwrap();
+
+        let mut token_list: Vec<Vec<Token>> = vec![];
+        for element in elements.iter().skip(1) {
+            let mut tokens: Vec<Token> = vec![];
+
+            let inputs = element.get("inputs").unwrap().as_array().unwrap();
+            for (i, input) in inputs.iter().enumerate() {
+                match types[i].as_str().unwrap() {
+                    "Address" => tokens.push(Token::Address(
+                        input.as_str().unwrap().parse::<Address>().unwrap(),
+                    )),
+                    "Uint" => tokens.push(Token::Uint(
+                        U256::from_dec_str(input.as_str().unwrap()).unwrap(),
+                    )),
+                    _ => println!("Fail conversion"),
+                }
+            }
+            token_list.push(tokens);
+        }
+        println!("token list: {:#?}", token_list);
+
+        MerkleTree::new(&token_list)
+    }
+
     pub fn new(inputs: &Vec<Vec<Token>>) -> Self {
         let leaf_hashes: BTreeMap<H256, Vec<Token>> = hash_all_tokens(inputs);
 
@@ -61,7 +155,7 @@ impl MerkleTree {
         };
 
         tree.calculate_proofs();
-        tree.record_proofs();
+        tree.record_output();
 
         tree
     }
@@ -98,9 +192,8 @@ impl MerkleTree {
         }
     }
 
-    pub fn record_proofs(&self) {
-        std::fs::create_dir("src/outputs").unwrap();
-        let path: String = format!("src/outputs/proofs.json");
+    pub fn record_output(&self) {
+        let path: String = format!("src/output.json");
         std::fs::File::create(path.clone()).unwrap();
 
         let mut data: Vec<Data> = vec![];
@@ -111,6 +204,15 @@ impl MerkleTree {
                 self.root.clone(),
                 leaf.clone(),
             ));
+            println!(
+                "{:#?}",
+                Data::new(
+                    inputs.to_vec(),
+                    self.proofs.get(leaf).unwrap().to_vec(),
+                    self.root.clone(),
+                    leaf.clone(),
+                )
+            );
         }
 
         // Save the JSON structure into the output file
@@ -217,10 +319,16 @@ mod tests {
     }
 
     #[test]
-    // #[ignore]
+    #[ignore]
     fn test_hash_by_leaves() {
         let input_tokens = input_tokens();
         let tree = MerkleTree::new(&input_tokens);
         println!("Merkle Tree: {:#?}", tree)
+    }
+
+    #[test]
+    // #[ignore]
+    fn test_import() {
+        MerkleTree::import();
     }
 }
