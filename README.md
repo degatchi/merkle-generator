@@ -22,6 +22,29 @@ Please feel free to make PRs <3
 
 ## Showcase
 
+### How to read the input file
+
+Make sure to have everything as a `String`. The program converts the `String` into it's corresponding type.
+
+E.g, for `"250000000000000000000"`, we use the 2nd element in `"types"` which is `"Uint"`, therefore `""250000000000000000000"` is converted into a `uint256`.
+
+```
+{
+        "types": [
+            "Address",
+            "Uint",
+            "Uint"
+        ]
+    },
+    {
+        "inputs": [
+            "0x599a9d94b12dd3313211bd1ae9e35a30c0753f5e",
+            "250000000000000000000",
+            "0"
+        ]
+    },
+```
+
 ### JSON Input
 
 ```
@@ -34,7 +57,6 @@ Please feel free to make PRs <3
         ]
     },
     {
-        "id": 0,
         "inputs": [
             "0x599a9d94b12dd3313211bd1ae9e35a30c0753f5e",
             "250000000000000000000",
@@ -42,7 +64,6 @@ Please feel free to make PRs <3
         ]
     },
     {
-        "id": 1,
         "inputs": [
             "0x599a9d94b12dd3313211bd1ae9e35a30c0753f5e",
             "0",
@@ -50,7 +71,6 @@ Please feel free to make PRs <3
         ]
     },
     {
-        "id": 2,
         "inputs": [
             "0x599a9d94b12dd3313211bd1ae9e35a30c0753f5e",
             "0",
