@@ -26,7 +26,7 @@ Please feel free to make PRs <3
 
 Make sure to have everything as a `String`. The program converts the `String` into it's corresponding type.
 
-E.g, for `"250000000000000000000"`, we use the 2nd element in `"types"` which is `"Uint"`, therefore `""250000000000000000000"` is converted into a `uint256`.
+E.g, for `"250000000000000000000"`, we use the 2nd element in `"types"` which is `"Uint"`, therefore `"250000000000000000000"` is converted into a `uint256`.
 
 ```
 {
