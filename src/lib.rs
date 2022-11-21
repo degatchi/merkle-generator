@@ -91,10 +91,7 @@ pub struct MerkleTree {
 }
 
 impl MerkleTree {
-    pub fn import() -> Self {
-        // Get the filenames from the command line.
-        let input_path = format!("src/input.json");
-
+    pub fn import(input_path: &String, output_path: &String) -> Self {
         let data = {
             // Load the first file into a string.
             let text = std::fs::read_to_string(&input_path).unwrap();
@@ -125,10 +122,10 @@ impl MerkleTree {
             token_list.push(tokens);
         }
 
-        MerkleTree::new(&token_list)
+        MerkleTree::new(&token_list, output_path.to_string())
     }
 
-    pub fn new(inputs: &Vec<Vec<Token>>) -> Self {
+    pub fn new(inputs: &Vec<Vec<Token>>, output_path: String) -> Self {
         let leaf_hashes: BTreeMap<H256, Vec<Token>> = hash_all_tokens(inputs);
 
         // New hash created by (Hash 1, Hash 2)
@@ -154,7 +151,7 @@ impl MerkleTree {
         };
 
         tree.calculate_proofs();
-        tree.record_output();
+        tree.record_output(&output_path);
 
         tree
     }
@@ -191,9 +188,8 @@ impl MerkleTree {
         }
     }
 
-    pub fn record_output(&self) {
-        let path: String = format!("src/output.json");
-        std::fs::File::create(path.clone()).unwrap();
+    pub fn record_output(&self, output_path: &String) {
+        std::fs::File::create(output_path.clone()).unwrap();
 
         let mut data: Vec<Data> = vec![];
         for (leaf, inputs) in self.token_hash.iter() {
@@ -206,7 +202,7 @@ impl MerkleTree {
         }
 
         // Save the JSON structure into the output file
-        std::fs::write(path, serde_json::to_string_pretty(&data).unwrap()).unwrap();
+        std::fs::write(output_path, serde_json::to_string_pretty(&data).unwrap()).unwrap();
     }
 }
 
