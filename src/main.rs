@@ -4,10 +4,10 @@ use merkle_generator::MerkleTree;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(short, long, required = true)]
+    #[arg(short, long, default_value_t  = String::from("src/input.json"))]
     input_path: String,
 
-    #[arg(short, long, required = true)]
+    #[arg(short, long, default_value_t  = String::from("src/output.json"))]
     output_path: String,
 }
 
