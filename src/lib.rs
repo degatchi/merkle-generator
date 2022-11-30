@@ -303,17 +303,20 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
+    // #[ignore]
     fn test_hash_by_leaves() {
         let input_tokens = input_tokens();
-        let tree = MerkleTree::new(&input_tokens);
+        let output_path = "src/output.json".to_string();
+        let tree = MerkleTree::new(&input_tokens, output_path);
         println!("Merkle Tree: {:#?}", tree)
     }
 
     #[test]
     // #[ignore]
     fn test_import() {
-        let tree = MerkleTree::import();
+        let input_path = "src/input.json".to_string();
+        let output_path = "src/output.json".to_string();
+        let tree = MerkleTree::import(&input_path, &output_path);
         println!("Merkle Tree: {:#?}", tree)
     }
 }
