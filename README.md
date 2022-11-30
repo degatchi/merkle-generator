@@ -45,7 +45,7 @@ Make sure to have everything as a `String` within the input file. The program co
 ### JSON Input
 ```json
 {
-        "types": [  // Make sure to capitalize these types.
+        "types": [
             "Address",
             "Uint",
             "Uint"
@@ -53,9 +53,9 @@ Make sure to have everything as a `String` within the input file. The program co
     },
     {
         "inputs": [
-            "0x599a9d94b12dd3313211bd1ae9e35a30c0753f5e", // address
-            "250000000000000000000", // uint
-            "0" // uint
+            "0x599a9d94b12dd3313211bd1ae9e35a30c0753f5e",
+            "250000000000000000000",
+            "0"
         ]
     },
 ```
@@ -66,16 +66,16 @@ Make sure to have everything as a `String` within the input file. The program co
 [
   {
     "inputs": [
-      "0x599a9d94b12dd3313211bd1ae9e35a30c0753f5e", // address
-      "250000000000000000000", // uint
-      "0" // uint
+      "0x599a9d94b12dd3313211bd1ae9e35a30c0753f5e",
+      "250000000000000000000",
+      "0"
     ],
     "proof": [
-      "0x69d3ca75db69c48c0569d359a5f110f5101ae898fe7a89e9537aa4a487110801", // bytes32
-      "0x5074756108d06d9e89bfa45aa7fcf1ab486e98cffce378a9bc71098e5687cb84" // bytes32
+      "0x69d3ca75db69c48c0569d359a5f110f5101ae898fe7a89e9537aa4a487110801",
+      "0x5074756108d06d9e89bfa45aa7fcf1ab486e98cffce378a9bc71098e5687cb84"
     ],
-    "root": "0x97c7f98805481c199f21f29a2390071af3f73b91e19797d5a5d6f6c8bed296c6", // bytes32
-    "leaf": "0x6fcec51a48c67ee2de86adc83fb1d9e65b8b8c8f60548cd839e3c463c9e5a46a" // bytes32
+    "root": "0x97c7f98805481c199f21f29a2390071af3f73b91e19797d5a5d6f6c8bed296c6",
+    "leaf": "0x6fcec51a48c67ee2de86adc83fb1d9e65b8b8c8f60548cd839e3c463c9e5a46a"
   },
 ]
 ```
