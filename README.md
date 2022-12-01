@@ -1,24 +1,33 @@
 # Merkle Generator
+
 Bootstrap your merkle tree, in Rust.
 
 # Table of Contents
+
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
 
 &nbsp;
+
 # Features
+
 - Merkle Tree creation
 - Merkle Proof generation.
 - Multi data type compatibility.
 - Odd leaf amount compatibility w/o duplication of leaf.
 
 &nbsp;
+
 # Installation
+
 First, make sure that you have [Rust installed](https://www.rust-lang.org/tools/install).
+
 &nbsp;
+
 ### Install from source
+
 ```
 git clone https://github.com/DeGatchi/merkle-generator &&
 cd merkle-generator &&
@@ -26,7 +35,9 @@ cargo install --path .
 ```
 
 &nbsp;
+
 # Usage
+
 Now that you have the project installed, you can use the `merkle-generator` command from anywhere in your terminal. By default, `merkle-generator` looks for `inputs.json` in the current directory and outputs to `output.json`.
 
 At any point you can use `merkle-generator --help` to see a list of all commands and options.
@@ -43,6 +54,7 @@ Options:
 Make sure to have everything as a `String` within the input file. The program converts the `String` into it's corresponding type.
 
 ### JSON Input
+
 ```json
 {
         "types": [
@@ -60,8 +72,8 @@ Make sure to have everything as a `String` within the input file. The program co
     },
 ```
 
-
 ### JSON Output
+
 ```json
 [
   {
@@ -76,10 +88,12 @@ Make sure to have everything as a `String` within the input file. The program co
     ],
     "root": "0x97c7f98805481c199f21f29a2390071af3f73b91e19797d5a5d6f6c8bed296c6",
     "leaf": "0x6fcec51a48c67ee2de86adc83fb1d9e65b8b8c8f60548cd839e3c463c9e5a46a"
-  },
+  }
 ]
 ```
 
 &nbsp;
+
 # Contributing
+
 First off, thanks for taking the time to contribute! PRs are welcomed and greatly appreciated <3.
